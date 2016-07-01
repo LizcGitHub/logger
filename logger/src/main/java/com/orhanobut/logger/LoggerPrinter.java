@@ -215,21 +215,20 @@ final class LoggerPrinter implements Printer {
       message = "Empty/NULL log message";
     }
 
-    logTopBorder(priority, tag);
     logHeaderContent(priority, tag, methodCount);
 
     //get bytes of message with system's default charset (which is UTF-8 for Android)
     byte[] bytes = message.getBytes();
     int length = bytes.length;
     if (length <= CHUNK_SIZE) {
-      if (methodCount > 0) {
+      if (methodCount > 0 && settings.getMode() == Settings.PRETTY_MODE) {
         logDivider(priority, tag);
       }
       logContent(priority, tag, message);
       logBottomBorder(priority, tag);
       return;
     }
-    if (methodCount > 0) {
+    if (methodCount > 0 && settings.getMode() == Settings.PRETTY_MODE) {
       logDivider(priority, tag);
     }
     for (int i = 0; i < length; i += CHUNK_SIZE) {
@@ -263,9 +262,20 @@ final class LoggerPrinter implements Printer {
   @SuppressWarnings("StringBufferReplaceableByString")
   private void logHeaderContent(int logType, String tag, int methodCount) {
     StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-    if (settings.isShowThreadInfo()) {
-      logChunk(logType, tag, HORIZONTAL_DOUBLE_LINE + " Thread: " + Thread.currentThread().getName());
-      logDivider(logType, tag);
+
+    switch (settings.getMode()) {
+      case Settings.PRETTY_MODE:
+        logTopBorder(logType, tag);
+        if (settings.isShowThreadInfo()) {
+          logChunk(logType, tag, HORIZONTAL_DOUBLE_LINE + " Thread: " + Thread.currentThread().getName());
+          logDivider(logType, tag);
+        }
+        break;
+      case Settings.SHORT_MODE:
+        if (settings.isShowThreadInfo()) {
+          logChunk(logType, tag, TOP_LEFT_CORNER + " Thread: " + Thread.currentThread().getName() + " " + DOUBLE_DIVIDER);
+        }
+        break;
     }
     String level = "";
 
@@ -282,8 +292,12 @@ final class LoggerPrinter implements Printer {
         continue;
       }
       StringBuilder builder = new StringBuilder();
-      builder.append("║ ")
-          .append(level)
+      if (settings.getMode() == Settings.SINGLE_MODE) {
+        builder = builder.append("║" + Thread.currentThread().getId() + "\t| ");
+      } else {
+        builder = builder.append("║ ");
+      }
+      builder.append(level)
           .append(getSimpleClassName(trace[stackIndex].getClassName()))
           .append(".")
           .append(trace[stackIndex].getMethodName())
@@ -299,7 +313,9 @@ final class LoggerPrinter implements Printer {
   }
 
   private void logBottomBorder(int logType, String tag) {
-    logChunk(logType, tag, BOTTOM_BORDER);
+    if (settings.getMode() == Settings.PRETTY_MODE) {
+      logChunk(logType, tag, BOTTOM_BORDER);
+    }
   }
 
   private void logDivider(int logType, String tag) {
@@ -308,8 +324,17 @@ final class LoggerPrinter implements Printer {
 
   private void logContent(int logType, String tag, String chunk) {
     String[] lines = chunk.split(System.getProperty("line.separator"));
+    StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
+    StackTraceElement stack = stacks[getStackOffset(stacks) + 1];
+    String header = HORIZONTAL_DOUBLE_LINE + " ";
+    if (settings.getMode() == Settings.SINGLE_MODE) {
+      header = HORIZONTAL_DOUBLE_LINE + Long.toString(Thread.currentThread().getId()) + "\t|";
+      header += " (" + stack.getFileName() + ":";
+      header += stack.getLineNumber() + ") \t| ";
+    }
+
     for (String line : lines) {
-      logChunk(logType, tag, HORIZONTAL_DOUBLE_LINE + " " + line);
+      logChunk(logType, tag, header + line);
     }
   }
 

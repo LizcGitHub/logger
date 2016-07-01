@@ -45,7 +45,7 @@ final class LogAssert {
   }
 
   public LogAssert hasThread(String threadName) {
-    return hasLog(priority, tag, HORIZONTAL_DOUBLE_LINE + " " + "Thread: " + threadName);
+    return hasLog(priority, tag, HORIZONTAL_DOUBLE_LINE + " Thread: " + threadName);
   }
 
   public LogAssert hasMethodInfo(String methodInfo) {
@@ -61,6 +61,20 @@ final class LogAssert {
     assertThat(item.type).isEqualTo(priority);
     assertThat(item.tag).isEqualTo(tag);
     assertThat(item.msg).isEqualTo(message);
+    return this;
+  }
+
+  private LogAssert matchLog(int priority, String tag, String message) {
+    ShadowLog.LogItem item = items.get(index++);
+    assertThat(item.type).isEqualTo(priority);
+    assertThat(item.tag).isEqualTo(tag);
+
+    int header_end = message.indexOf("|");
+    int msg_start = message.indexOf("|", header_end + 1);
+    int header_end2 = item.msg.indexOf("|");
+    int msg_start2 = item.msg.indexOf("|", header_end + 1);
+    assertThat(item.msg.substring(0, header_end2)).isEqualTo(message.substring(0, header_end));
+    assertThat(item.msg.substring(header_end2 + msg_start2)).isEqualTo(message.substring(header_end + msg_start));
     return this;
   }
 
@@ -97,6 +111,40 @@ final class LogAssert {
     }
 
     hasBottomBorder();
+    hasNoMoreMessages();
+
+    return this;
+  }
+
+  public LogAssert hasShortThread(String threadName) {
+    return hasLog(priority, tag, TOP_LEFT_CORNER + " Thread: " + threadName + " " + DOUBLE_DIVIDER);
+  }
+
+  public LogAssert hasMessageWithShortSettings(String... messages) {
+    skip();
+    skip();
+    skip();
+
+    for (String message : messages) {
+      hasMessage(message);
+    }
+
+    hasNoMoreMessages();
+
+    return this;
+  }
+
+  public LogAssert hasSingleMessage(long threadId, String message) {
+    String header = HORIZONTAL_DOUBLE_LINE + Long.toString(threadId) + "\t|";
+    header += "SingleLoggerTest.java" + "\t| ";
+    return matchLog(priority, tag, header + message);
+  }
+
+  public LogAssert hasMessageWithSingleSettings(long threadId, String... messages) {
+    for (String message : messages) {
+      hasSingleMessage(threadId, message);
+    }
+
     hasNoMoreMessages();
 
     return this;

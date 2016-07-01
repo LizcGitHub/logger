@@ -7,6 +7,11 @@ public final class Settings {
   private int methodOffset = 0;
   private LogAdapter logAdapter;
 
+  public static final int PRETTY_MODE = 1;
+  public static final int SHORT_MODE = 2;
+  public static final int SINGLE_MODE = 3;
+  private int mode = PRETTY_MODE;
+
   /**
    * Determines to how logs will be printed
    */
@@ -68,5 +73,18 @@ public final class Settings {
     methodOffset = 0;
     showThreadInfo = true;
     logLevel = LogLevel.FULL;
+  }
+
+  public int getMode() {
+    return mode;
+  }
+
+  public void shortMode() {
+    mode = SHORT_MODE;
+  }
+
+  public void singleLine() {
+    mode = SINGLE_MODE;
+    methodCount = 0;
   }
 }
