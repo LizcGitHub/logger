@@ -3,6 +3,14 @@
 
 <img align="right" src='https://github.com/orhanobut/logger/blob/master/images/logger-logo.png' width='128' height='128'/>
 
+###Improved Logger
+Logger will output too many logs. I add mode setting to support three modes: pretty mode, brief mode and single mode.
+- pretty mode: as same as original Logger
+- brief mode: reduce default log from 8 lines to 4 lines. Usage: Logger.init().briefMode();
+- single mode: reduce default log from 8 lines to 1 line. Usage: Logger.init().singleMode();
+
+Below is original Logger README.
+
 ###Logger
 Simple, pretty and powerful logger for android
 

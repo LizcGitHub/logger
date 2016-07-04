@@ -22,7 +22,6 @@ import static com.orhanobut.logger.Logger.ERROR;
 import static com.orhanobut.logger.Logger.INFO;
 import static com.orhanobut.logger.Logger.VERBOSE;
 import static com.orhanobut.logger.Logger.WARN;
-import static com.orhanobut.logger.Logger.log;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
@@ -37,7 +36,7 @@ public class SingleLoggerTest {
     threadName = Thread.currentThread().getName();
     threadId = Thread.currentThread().getId();
 
-    Logger.init().singleLine();
+    Logger.init().singleMode();
   }
 
   @After public void tearDown() {
@@ -230,7 +229,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithoutThread() {
-    Logger.init().hideThreadInfo().singleLine();
+    Logger.init().hideThreadInfo().singleMode();
     Logger.i("message");
     assertLog(INFO)
             .hasSingleMessage(threadId, "message")
@@ -238,7 +237,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithCustomTag() {
-    Logger.init("CustomTag").singleLine();
+    Logger.init("CustomTag").singleMode();
     Logger.i("message");
     print();
     assertLog("CustomTag", INFO)
@@ -247,7 +246,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithOneMethodInfo() {
-    Logger.init().methodCount(1).singleLine();
+    Logger.init().methodCount(1).singleMode();
     Logger.i("message");
     assertLog(INFO)
             .hasSingleMessage(threadId, "message")
@@ -255,7 +254,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithNoMethodInfo() {
-    Logger.init().methodCount(0).singleLine();
+    Logger.init().methodCount(0).singleMode();
     Logger.i("message");
 
     assertLog(INFO)
@@ -264,7 +263,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithNoMethodInfoAndNoThreadInfo() {
-    Logger.init().methodCount(0).hideThreadInfo().singleLine();
+    Logger.init().methodCount(0).hideThreadInfo().singleMode();
     Logger.i("message");
 
     assertLog(INFO)
@@ -273,7 +272,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithOnlyOnceCustomTag() {
-    Logger.init().hideThreadInfo().methodCount(0).singleLine();
+    Logger.init().hideThreadInfo().methodCount(0).singleMode();
     Logger.t("CustomTag").i("message");
     Logger.i("message");
 
@@ -285,24 +284,22 @@ public class SingleLoggerTest {
   }
 
   @Test public void logWithOnlyOnceMethodInfo() {
-    Logger.init().hideThreadInfo().methodCount(0).singleLine();
+    Logger.init().hideThreadInfo().methodCount(0).singleMode();
     Logger.t(1).i("message");
     Logger.i("message");
 
     assertLog(INFO)
             .skip()
             .hasSingleMessage(threadId, "message")
-            .hasSingleMessage(threadId, "message")
             .hasNoMoreMessages();
   }
 
   @Test public void logWithOnlyOnceMethodInfoAndCustomTag() {
-    Logger.init().hideThreadInfo().methodCount(0).singleLine();
+    Logger.init().hideThreadInfo().methodCount(0).singleMode();
     Logger.t("CustomTag", 1).i("message");
     Logger.i("message");
 
     assertLog("PRETTYLOGGER-CustomTag", INFO)
-            .skip()
             .hasSingleMessage(threadId, "message")
             .defaultTag()
             .hasSingleMessage(threadId, "message")
@@ -310,7 +307,7 @@ public class SingleLoggerTest {
   }
 
   @Test public void logNone() {
-    Logger.init().logLevel(LogLevel.NONE).singleLine();
+    Logger.init().logLevel(LogLevel.NONE).singleMode();
     Logger.i("message");
 
     assertLog(INFO)
@@ -319,7 +316,7 @@ public class SingleLoggerTest {
 
   @Test public void useDefaultSettingsIfInitNotCalled() {
     Logger.i("message");
-    print();
+
     assertLog(INFO)
             .hasSingleMessage(threadId, "message")
             .hasNoMoreMessages();
@@ -327,8 +324,6 @@ public class SingleLoggerTest {
 
   private void print() {
     for (ShadowLog.LogItem logItem : ShadowLog.getLogs()) {
-      System.out.print("║1 t.logWithCustomTag | (ShortLoggerTest.java:241)\n");
-      System.out.print("║1  aaaa.aaaa | (ShortLoggerTest.java:241)\n");
       System.out.print(logItem.msg + "\n");
     }
   }

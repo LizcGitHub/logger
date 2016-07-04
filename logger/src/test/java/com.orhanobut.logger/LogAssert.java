@@ -69,12 +69,9 @@ final class LogAssert {
     assertThat(item.type).isEqualTo(priority);
     assertThat(item.tag).isEqualTo(tag);
 
-    int header_end = message.indexOf("|");
-    int msg_start = message.indexOf("|", header_end + 1);
-    int header_end2 = item.msg.indexOf("|");
-    int msg_start2 = item.msg.indexOf("|", header_end + 1);
-    assertThat(item.msg.substring(0, header_end2)).isEqualTo(message.substring(0, header_end));
-    assertThat(item.msg.substring(header_end2 + msg_start2)).isEqualTo(message.substring(header_end + msg_start));
+    int message_start = message.indexOf("\t") + 2; // header end with "\t?"
+    int msg_start = item.msg.indexOf("\t") + 2;
+    assertThat(item.msg.substring(msg_start)).isEqualTo(message.substring(message_start));
     return this;
   }
 
@@ -135,8 +132,8 @@ final class LogAssert {
   }
 
   public LogAssert hasSingleMessage(long threadId, String message) {
-    String header = HORIZONTAL_DOUBLE_LINE + Long.toString(threadId) + "\t|";
-    header += "SingleLoggerTest.java" + "\t| ";
+    String header = HORIZONTAL_DOUBLE_LINE + Long.toString(threadId) + ". ";
+    header += "SingleLoggerTest.java" + "\t|";
     return matchLog(priority, tag, header + message);
   }
 

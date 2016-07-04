@@ -8,7 +8,7 @@ public final class Settings {
   private LogAdapter logAdapter;
 
   public static final int PRETTY_MODE = 1;
-  public static final int SHORT_MODE = 2;
+  public static final int BRIEF_MODE = 2;
   public static final int SINGLE_MODE = 3;
   private int mode = PRETTY_MODE;
 
@@ -79,12 +79,15 @@ public final class Settings {
     return mode;
   }
 
-  public void shortMode() {
-    mode = SHORT_MODE;
+  public void prettyMode() {
+    mode = PRETTY_MODE;
   }
 
-  public void singleLine() {
+  public void briefMode() {
+    mode = BRIEF_MODE;
+  }
+
+  public void singleMode() {
     mode = SINGLE_MODE;
-    methodCount = 0;
   }
 }

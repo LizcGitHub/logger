@@ -261,8 +261,6 @@ final class LoggerPrinter implements Printer {
 
   @SuppressWarnings("StringBufferReplaceableByString")
   private void logHeaderContent(int logType, String tag, int methodCount) {
-    StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-
     switch (settings.getMode()) {
       case Settings.PRETTY_MODE:
         logTopBorder(logType, tag);
@@ -271,14 +269,19 @@ final class LoggerPrinter implements Printer {
           logDivider(logType, tag);
         }
         break;
-      case Settings.SHORT_MODE:
+      case Settings.BRIEF_MODE:
         if (settings.isShowThreadInfo()) {
-          logChunk(logType, tag, TOP_LEFT_CORNER + " Thread: " + Thread.currentThread().getName() + " " + DOUBLE_DIVIDER);
+          logChunk(logType, tag, TOP_LEFT_CORNER + " Thread: "
+                  + Thread.currentThread().getName() + " " + DOUBLE_DIVIDER);
         }
         break;
+      case Settings.SINGLE_MODE:
+      default:
+        return;
     }
-    String level = "";
 
+    StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+    String level = "";
     int stackOffset = getStackOffset(trace) + settings.getMethodOffset();
 
     //corresponding method count with the current stack may exceeds the stack trace. Trims the count
@@ -292,11 +295,7 @@ final class LoggerPrinter implements Printer {
         continue;
       }
       StringBuilder builder = new StringBuilder();
-      if (settings.getMode() == Settings.SINGLE_MODE) {
-        builder = builder.append("║" + Thread.currentThread().getId() + "\t| ");
-      } else {
-        builder = builder.append("║ ");
-      }
+      builder = builder.append("║ ");
       builder.append(level)
           .append(getSimpleClassName(trace[stackIndex].getClassName()))
           .append(".")
@@ -326,15 +325,24 @@ final class LoggerPrinter implements Printer {
     String[] lines = chunk.split(System.getProperty("line.separator"));
     StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
     StackTraceElement stack = stacks[getStackOffset(stacks) + 1];
-    String header = HORIZONTAL_DOUBLE_LINE + " ";
+    String header = HORIZONTAL_DOUBLE_LINE + "";
+    String middle = " ";
     if (settings.getMode() == Settings.SINGLE_MODE) {
-      header = HORIZONTAL_DOUBLE_LINE + Long.toString(Thread.currentThread().getId()) + "\t|";
+      header = Long.toString(Thread.currentThread().getId()) + ".";
       header += " (" + stack.getFileName() + ":";
-      header += stack.getLineNumber() + ") \t| ";
+      header += stack.getLineNumber() + ")\t";
+      if (lines.length == 1) {
+        middle = " ";
+      } else {
+        middle = "┌";
+      }
     }
 
     for (String line : lines) {
-      logChunk(logType, tag, header + line);
+      logChunk(logType, tag, header + middle + line);
+      if (settings.getMode() == Settings.SINGLE_MODE) {
+        middle = "│";
+      }
     }
   }
 

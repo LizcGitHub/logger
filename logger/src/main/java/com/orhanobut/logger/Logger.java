@@ -14,6 +14,13 @@ public final class Logger {
 
   private static final String DEFAULT_TAG = "PRETTYLOGGER";
 
+  public static final String IAMHERE1 = "===-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=";
+  public static final String IAMHERE2 = "===  @_@   @_@   @_@   @_@   @_@   @_@ ";
+  public static final String IAMHERE3 = "===  ^_^   ^_^   ^_^   ^_^   ^_^   ^_^ ";
+  public static final String IAMHERE4 = "=== (^o^) (^o^) (^o^) (^o^) (^o^) (^o^)";
+  public static final String IAMHERE5 = "=== (>_<) (>_<) (>_<) (>_<) (>_<) (>_<)";
+  public static final String IAMHERE6 = "=== (-_-) (-_-) (-_-) (-_-) (-_-) (-_-)";
+
   private static Printer printer = new LoggerPrinter();
 
   //no instance

@@ -34,7 +34,7 @@ public class ShortLoggerTest {
   @Before public void setup() {
     threadName = Thread.currentThread().getName();
 
-    Logger.init().shortMode();
+    Logger.init().briefMode();
   }
 
   @After public void tearDown() {
@@ -227,7 +227,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithoutThread() {
-    Logger.init().hideThreadInfo().shortMode();
+    Logger.init().hideThreadInfo().briefMode();
     Logger.i("message");
     assertLog(INFO)
         .skip()
@@ -237,9 +237,8 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithCustomTag() {
-    Logger.init("CustomTag").shortMode();
+    Logger.init("CustomTag").briefMode();
     Logger.i("message");
-    print();
     assertLog("CustomTag", INFO)
         .hasShortThread(threadName)
         .skip()
@@ -249,7 +248,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithOneMethodInfo() {
-    Logger.init().methodCount(1).shortMode();
+    Logger.init().methodCount(1).briefMode();
     Logger.i("message");
     assertLog(INFO)
         .hasShortThread(threadName)
@@ -259,7 +258,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithNoMethodInfo() {
-    Logger.init().methodCount(0).shortMode();
+    Logger.init().methodCount(0).briefMode();
     Logger.i("message");
 
     assertLog(INFO)
@@ -270,7 +269,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithNoMethodInfoAndNoThreadInfo() {
-    Logger.init().methodCount(0).hideThreadInfo().shortMode();
+    Logger.init().methodCount(0).hideThreadInfo().briefMode();
     Logger.i("message");
 
     assertLog(INFO)
@@ -279,7 +278,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithOnlyOnceCustomTag() {
-    Logger.init().hideThreadInfo().methodCount(0).shortMode();
+    Logger.init().hideThreadInfo().methodCount(0).briefMode();
     Logger.t("CustomTag").i("message");
     Logger.i("message");
 
@@ -291,7 +290,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithOnlyOnceMethodInfo() {
-    Logger.init().hideThreadInfo().methodCount(0).shortMode();
+    Logger.init().hideThreadInfo().methodCount(0).briefMode();
     Logger.t(1).i("message");
     Logger.i("message");
 
@@ -303,7 +302,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logWithOnlyOnceMethodInfoAndCustomTag() {
-    Logger.init().hideThreadInfo().methodCount(0).shortMode();
+    Logger.init().hideThreadInfo().methodCount(0).briefMode();
     Logger.t("CustomTag", 1).i("message");
     Logger.i("message");
 
@@ -316,7 +315,7 @@ public class ShortLoggerTest {
   }
 
   @Test public void logNone() {
-    Logger.init().logLevel(LogLevel.NONE).shortMode();
+    Logger.init().logLevel(LogLevel.NONE).briefMode();
     Logger.i("message");
 
     assertLog(INFO)
