@@ -6,8 +6,11 @@
 ###Improved Logger
 Logger will output too many logs. I add mode setting to support three modes: pretty mode, brief mode and single mode.
 - pretty mode: as same as original Logger
-- brief mode: reduce default log from 8 lines to 4 lines. Usage: Logger.init().briefMode();
+<img src='https://github.com/oreofish/logger/blob/master/images/pretty_mode.png'/>
+- brief mode: just remove lines, reduce default log from 8 lines to 4 lines. Usage: Logger.init().briefMode();
+<img src='https://github.com/oreofish/logger/blob/master/images/brief_mode.png'/>
 - single mode: reduce default log from 8 lines to 1 line. Usage: Logger.init().singleMode();
+<img src='https://github.com/oreofish/logger/blob/master/images/single_line_mode.png'/>
 
 Below is original Logger README.
 
